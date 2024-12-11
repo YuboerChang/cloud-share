@@ -11,6 +11,7 @@ import java.util.Base64;
 
 public class EncryptUtil {
     public static final String BASE_SECRET_KEY = "this_is_a_base_secret_key";
+    public static final String BASE_SALT = "24";
     public static final String ENCRYPTION_TYPE_AES = "AES";
     public static final int KEY_LENGTH_32 = 32;
 
@@ -28,10 +29,23 @@ public class EncryptUtil {
     }
 
     /**
+     * MD5加密算法，加盐，避免彩虹表攻击
+     * 如果salt没有给，则按照默认的即可
+     */
+    public static String encryptByMD5AddSalt(String password, String salt) throws NoSuchAlgorithmException {
+        if (BaseUtil.isEmptyString(salt)) {
+            salt = BASE_SALT;
+        }
+        // 盐值插在第二位
+        password = password.charAt(0) + salt + password.substring(1);
+        return encryptByMD5(password);
+    }
+
+    /**
      * 随机获取一个字符串，调用随机工具失败就直接返回基础字符串，不做异常处理
      */
     public static String getRandomSecretKey() {
-        String secretKey = "";
+        String secretKey;
         try {
             KeyGenerator keyGenerator = KeyGenerator.getInstance(ENCRYPTION_TYPE_AES);
             keyGenerator.init(KEY_LENGTH_32, new SecureRandom());

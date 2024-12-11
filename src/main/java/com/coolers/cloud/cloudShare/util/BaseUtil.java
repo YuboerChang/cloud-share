@@ -27,4 +27,8 @@ public class BaseUtil {
         return collection != null && !collection.isEmpty();
     }
 
+    public static boolean isEmptyString(String string) {
+        return string == null || string.isEmpty();
+    }
+
 }
